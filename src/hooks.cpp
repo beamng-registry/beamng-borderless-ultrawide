@@ -20,8 +20,8 @@ typedef BOOL(WINAPI* PFN_MoveWindow)(HWND, int, int, int, int, BOOL);
 typedef BOOL(WINAPI* PFN_SetWindowPos)(HWND, HWND, int, int, int, int, UINT);
 
 static PFN_AdjustWindowRectEx fpAdjustWindowRectEx = nullptr;
-static PFN_MoveWindow         fpMoveWindow         = nullptr;
-static PFN_SetWindowPos        fpSetWindowPos       = nullptr;
+static PFN_MoveWindow        fpMoveWindow         = nullptr;
+static PFN_SetWindowPos      fpSetWindowPos       = nullptr;
 
 // Track the main game window handle
 static HWND g_gameHwnd = nullptr;
