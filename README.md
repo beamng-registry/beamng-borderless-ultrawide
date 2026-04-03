@@ -24,8 +24,8 @@ When loaded into the game process the DLL installs [MinHook](https://github.com/
 ### Option 1. Download a release
 
 1. Open the [Releases](https://github.com/beamng-registry/beamng-borderless-ultrawide/releases) page.
-2. Download `borderless.dll` and `injector.exe`, or grab the release `.zip` bundle.
-3. Copy `config.ini` next to `borderless.dll` and edit the values for your monitor layout.
+2. Download `borderless.dll`, `injector.exe`, and `config.ini`, or grab the release `.zip` bundle.
+3. Keep `config.ini` next to `borderless.dll` and edit the values for your monitor layout.
 4. Launch **BeamNG.drive** in windowed mode.
 5. Run `injector.exe` as Administrator to inject the DLL into the game.
 

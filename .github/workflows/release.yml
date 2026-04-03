@@ -39,4 +39,5 @@ jobs:
           files: |
             build/Release/borderless.dll
             build/Release/injector.exe
+            config.ini
             beamng-borderless-ultrawide-${{ github.ref_name }}.zip
