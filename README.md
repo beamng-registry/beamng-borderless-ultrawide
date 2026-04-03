@@ -19,9 +19,17 @@ When loaded into the game process the DLL installs [MinHook](https://github.com/
 | `MoveWindow` | Strips `WS_OVERLAPPEDWINDOW` styles, adds `WS_POPUP`, and forces the window to the position/size from `config.ini`. |
 | `SetWindowPos` | Same style fix; also clears `SWP_NOMOVE` / `SWP_NOSIZE` flags and forces the configured position/size. |
 
-## Quick start
+## Installation
 
-### 1. Build (Windows + CMake ≥ 3.15 + MSVC)
+### Option 1. Download a release
+
+1. Open the [Releases](https://github.com/beamng-registry/beamng-borderless-ultrawide/releases) page.
+2. Download `borderless.dll` and `injector.exe`, or grab the release `.zip` bundle.
+3. Copy `config.ini` next to `borderless.dll` and edit the values for your monitor layout.
+4. Launch **BeamNG.drive** in windowed mode.
+5. Run `injector.exe` as Administrator to inject the DLL into the game.
+
+### Option 2. Build it yourself (Windows + CMake ≥ 3.15 + MSVC)
 
 ```bash
 cmake -B build -A x64

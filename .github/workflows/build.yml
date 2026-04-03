@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Configure
+        run: cmake -S . -B build -A x64
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: beamng-borderless-ultrawide-build
+          path: |
+            build/Release/borderless.dll
+            build/Release/injector.exe
+            config.ini
