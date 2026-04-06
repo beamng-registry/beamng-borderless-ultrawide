@@ -61,18 +61,31 @@ static bool IsGameWindow(HWND hWnd)
     return true;
 }
 
+static bool IsAtTargetRect(HWND hWnd)
+{
+    RECT rc;
+    return GetWindowRect(hWnd, &rc) &&
+           rc.left == g_cfg.x && rc.top == g_cfg.y &&
+           (rc.right - rc.left) == g_cfg.width &&
+           (rc.bottom - rc.top) == g_cfg.height;
+}
+
 static void MakeBorderless(HWND hWnd)
 {
+    constexpr LONG kRemoveStyle = WS_CAPTION | WS_THICKFRAME |
+                                  WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
+    constexpr LONG kRemoveExStyle = WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE |
+                                    WS_EX_STATICEDGE | WS_EX_WINDOWEDGE;
+
     LONG style = GetWindowLongW(hWnd, GWL_STYLE);
-    style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX |
-                WS_MAXIMIZEBOX | WS_SYSMENU);
-    style |= WS_POPUP;
-    SetWindowLongW(hWnd, GWL_STYLE, style);
+    LONG desired = (style & ~kRemoveStyle) | WS_POPUP;
+    if (style != desired)
+        SetWindowLongW(hWnd, GWL_STYLE, desired);
 
     LONG exStyle = GetWindowLongW(hWnd, GWL_EXSTYLE);
-    exStyle &= ~(WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE |
-                 WS_EX_STATICEDGE | WS_EX_WINDOWEDGE);
-    SetWindowLongW(hWnd, GWL_EXSTYLE, exStyle);
+    LONG desiredEx = exStyle & ~kRemoveExStyle;
+    if (exStyle != desiredEx)
+        SetWindowLongW(hWnd, GWL_EXSTYLE, desiredEx);
 }
 
 // ---------------------------------------------------------------------------
@@ -102,6 +115,14 @@ static BOOL WINAPI HookedMoveWindow(
         }
 
         MakeBorderless(hWnd);
+
+        // Skip the call entirely if the window is already at the target rect.
+        if (IsAtTargetRect(hWnd))
+        {
+            Log("[hook] MoveWindow suppressed – already at target rect\n");
+            g_inHook = false;
+            return TRUE;
+        }
 
         Log("[hook] MoveWindow(%d,%d,%d,%d) -> (%d,%d,%d,%d)\n",
             X, Y, nWidth, nHeight,
@@ -136,6 +157,17 @@ static BOOL WINAPI HookedSetWindowPos(
 
         // Strip NOMOVE / NOSIZE so our coordinates take effect.
         uFlags &= ~(SWP_NOMOVE | SWP_NOSIZE);
+
+        // Skip the call entirely if the window is already at the target rect.
+        if (IsAtTargetRect(hWnd))
+        {
+            Log("[hook] SetWindowPos suppressed – already at target rect\n");
+            g_inHook = false;
+            return TRUE;
+        }
+
+        // Suppress WM_WINDOWPOSCHANGING to reduce message-loop pressure.
+        uFlags |= SWP_NOSENDCHANGING;
 
         Log("[hook] SetWindowPos flags=0x%X -> pos(%d,%d) size(%d,%d)\n",
             uFlags, g_cfg.x, g_cfg.y, g_cfg.width, g_cfg.height);
